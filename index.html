@@ -53,38 +53,84 @@ button.sm{padding:3px 10px;margin:0 3px;background:transparent;color:var(--brand
 .lg input{display:block;width:100%;margin:6px 0 10px;padding:9px}
 .lnk{background:none;border:0;color:var(--mute);text-decoration:underline;font-weight:400;padding:4px 0;font-size:.85rem}
 .err{color:#c0392b;font-size:.9rem}
+
+.pay{margin:14px 0}
+.payb{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+a.bk{display:inline-block;background:#e2136e;color:#fff;text-decoration:none;font-weight:600;border-radius:10px;padding:10px 18px}
+.lg select{display:block;width:100%;margin:6px 0 10px;padding:9px;font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:6px}
+.ok{color:var(--brand);font-size:.95rem}
+.rq{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:8px 0}
+.rq b{font-size:1.05rem}
+.rq .m{color:var(--mute);font-size:.88rem;margin:2px 0 8px}
+.rq .dup{color:#c0392b;font-size:.88rem}
+button.no{background:transparent;color:#c0392b;border:1px solid #c0392b;margin-left:8px}
+.rq button{padding:6px 14px}
+
+.view{display:none}.view.on{display:block}
+.wrap{padding-bottom:96px}
+.nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:20}
+.nav button{flex:1;background:none;color:var(--mute);border-radius:0;padding:14px 4px 13px;font-weight:600;font-size:1rem;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:6px;position:relative}
+.nav button.on{color:var(--brand);box-shadow:inset 0 3px 0 var(--brand)}
+.nav span{font-size:1.3rem;line-height:1}
+.nav i{font-style:normal}
+.bdg{position:static;background:#c0392b;color:#fff;border-radius:10px;font-size:.72rem;min-width:18px;padding:0 5px;line-height:18px;display:none;font-weight:700}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>আন-নাজাহ সমিতি</h1>
   <p class="sub" id="sub"></p>
-  <div class="cards" id="cards"></div>
-  <div class="tw"><div id="app"></div></div>
-  <div id="former"></div>
-  <div class="bar" id="bar"></div>
-  <p class="note" id="note">লোড হচ্ছে…</p>
-  <div id="lnkwrap" style="display:none"><button class="lnk" id="showlogin">কোষাধ্যক্ষ লগইন</button></div>
-  <div class="lg" id="login">
-    <label>ইমেইল<input id="em" type="email" autocomplete="username"></label>
-    <label>পাসওয়ার্ড<input id="pw" type="password" autocomplete="current-password"></label>
-    <button id="dologin">লগইন</button>
-    <p class="err" id="lerr"></p>
+  <div class="view on" id="v1">
+    <div class="cards" id="cards"></div>
+    <div class="tw"><div id="app"></div></div>
+    <div id="former"></div>
+    <div class="bar" id="bar"></div>
+    <p class="note" id="note">লোড হচ্ছে…</p>
+    <div id="lnkwrap" style="display:none"><button class="lnk" id="showlogin">কোষাধ্যক্ষ লগইন</button></div>
+    <div class="lg" id="login">
+      <label>ইমেইল<input id="em" type="email" autocomplete="username"></label>
+      <label>পাসওয়ার্ড<input id="pw" type="password" autocomplete="current-password"></label>
+      <button id="dologin">লগইন</button>
+      <p class="err" id="lerr"></p>
+    </div>
+  </div>
+  <div class="view" id="v2">
+    <div id="pending"></div>
+    <div class="pay" id="pay" style="display:none">
+      <h2 class="fh" style="margin-top:6px">সঞ্চয় প্রেরণ করুন</h2>
+      <div class="payb">
+        <a class="bk" id="bk" href="intent:#Intent;package=com.bKash.customerapp;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.bKash.customerapp;end">বিকাশ অ্যাপ খুলুন</a>
+        <button class="add" id="payopen">আমি টাকা পাঠিয়েছি</button>
+      </div>
+      <div class="lg" id="payform">
+        <label>আপনার নাম<select id="pn"></select></label>
+        <label>মাস<select id="pm"></select></label>
+        <label>টাকার পরিমাণ<input id="pa" type="number" inputmode="numeric" min="1"></label>
+        <label>যে নম্বর থেকে পাঠিয়েছেন (না জানলে ফাঁকা রাখুন)<input id="pf" type="tel"></label>
+        <label>ট্রানজেকশন আইডি (না জানলে ফাঁকা রাখুন)<input id="pt" type="text"></label>
+        <button id="psend">পাঠান</button>
+        <p id="pmsg" class="err"></p>
+      </div>
+    </div>
   </div>
 </div>
+<nav class="nav">
+  <button id="t1" class="on"><i>হিসাব</i></button>
+  <button id="t2"><i id="t2l">সঞ্চয় পাঠান</i><b class="bdg" id="bdg"></b></button>
+</nav>
 <script>
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(function(){});
 (function(){
 var URL0="https://aqosirimziitssudxaat.supabase.co",KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxb3NpcmltemlpdHNzdWR4YWF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQyNzg3MDgsImV4cCI6MjEwOTg1NDcwOH0.xBvmoqcDZ_mo3rarENHYmF8AkRHPkwyz5-VsyKuaVMc";
 var MONTHS=["জানু","ফেব্রু","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টে","অক্টো","নভে","ডিসে"];
 var D={year:new Date().getFullYear(),updated:"",members:[],former:[]};
-var S=null,dirty=false,loaded=false;
+var S=null,dirty=false,loaded=false,REQ=[],namesKey="";
 try{S=JSON.parse(localStorage.getItem("annajah_s")||"null")}catch(e){}
 var bn=function(n){return Number(n||0).toLocaleString("bn-BD")};
 var $=function(i){return document.getElementById(i)};
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
 function editor(){return !!(S&&S.access_token&&S.exp>Date.now())}
-function hdr(tok){return {"apikey":KEY,"Authorization":"Bearer "+(tok||KEY),"Content-Type":"application/json"}}
+function hdr(tok,extra){return Object.assign({"apikey":KEY,"Authorization":"Bearer "+(tok||KEY),"Content-Type":"application/json"},extra||{})}
 
 async function load(){
   try{
@@ -94,6 +140,14 @@ async function load(){
     else if(!loaded)$("note").textContent="তথ্য পাওয়া যায়নি।";
   }catch(e){if(!loaded)$("note").textContent="ইন্টারনেট সংযোগ দেখুন, তারপর পেজ রিফ্রেশ করুন।"}
   render();
+  if(editor())loadReq();
+}
+async function loadReq(){
+  try{
+    var r=await fetch(URL0+"/rest/v1/payment_requests?select=*&order=created_at.asc&limit=300",{headers:hdr(S.access_token)});
+    var j=await r.json();
+    if(Array.isArray(j)){REQ=j;renderPending()}
+  }catch(e){}
 }
 function mark(){dirty=true;var s=$("save");if(s)s.disabled=false}
 
@@ -111,7 +165,7 @@ function render(){
   D.members.forEach(function(m,i){
     var tr=el("tr"),td=el("td");
     if(ed){var ni=el("input","nm");ni.value=m.name;ni.oninput=function(){m.name=ni.value;mark()};td.appendChild(ni);
-      var xb=el("button","x","✕");xb.title="প্রাক্তন সদস্য করুন";xb.onclick=function(){var r=D.members.splice(i,1)[0];D.former.push({name:r.name,paid:r.paid,refunded:0});mark();render()};td.appendChild(xb)}
+      var xb=el("button","x","সরান");xb.title="প্রাক্তন সদস্য করুন";xb.onclick=function(){var r=D.members.splice(i,1)[0];D.former.push({name:r.name,paid:r.paid,refunded:0});mark();render()};td.appendChild(xb)}
     else td.textContent=m.name;
     tr.appendChild(td);var sum=0;
     for(var k=0;k<12;k++){var v=+m.paid[k]||0;sum+=v;var c=el("td",v?"p":"z");
@@ -133,10 +187,10 @@ function render(){
       var tr=el("tr");tr.appendChild(el("td","",m.name));tr.appendChild(el("td","",bn(s)));var rc=el("td");
       if(ed){var ri=el("input");ri.type="number";ri.inputMode="numeric";ri.min="0";ri.value=m.refunded||"";ri.placeholder="০";ri.onchange=function(){m.refunded=Math.max(0,parseFloat(ri.value)||0);mark();render()};rc.appendChild(ri)}else rc.textContent=bn(m.refunded);
       tr.appendChild(rc);var due=s-(+m.refunded||0);
-      tr.appendChild(el("td",due>0?"":"p",due>0?bn(due):due===0?"✔ পরিশোধিত":"বেশি দেওয়া হয়েছে"));
+      tr.appendChild(el("td",due>0?"":"p",due>0?bn(due):due===0?"পরিশোধিত":"বেশি দেওয়া হয়েছে"));
       if(ed){var ac=el("td");
-        var rb=el("button","sm","↩ ফিরিয়ে আনুন");rb.onclick=function(){D.members.push({name:m.name,paid:m.paid});F.splice(j,1);mark();render()};
-        var db=el("button","sm","✕ তালিকা থেকে সরান");db.onclick=function(){F.splice(j,1);mark();render()};
+        var rb=el("button","sm","ফিরিয়ে আনুন");rb.onclick=function(){D.members.push({name:m.name,paid:m.paid});F.splice(j,1);mark();render()};
+        var db=el("button","sm","তালিকা থেকে সরান");db.onclick=function(){F.splice(j,1);mark();render()};
         ac.appendChild(rb);ac.appendChild(db);tr.appendChild(ac)}
       fb.appendChild(tr)});
     ft.appendChild(fb);w.appendChild(ft);fw.appendChild(w)}
@@ -144,23 +198,98 @@ function render(){
   var bar=$("bar"),note=$("note");bar.textContent="";
   if(ed){
     bar.appendChild(el("span","","সাল:"));var yi=el("input","yr");yi.type="number";yi.value=D.year;yi.onchange=function(){D.year=+yi.value||D.year;mark();render()};bar.appendChild(yi);
-    var ab=el("button","add","＋ সদস্য যোগ");ab.onclick=function(){D.members.push({name:"নতুন সদস্য",paid:{}});mark();render()};bar.appendChild(ab);
-    var sb=el("button","","✔ সংরক্ষণ করে সবাইকে আপডেট দিন");sb.id="save";sb.disabled=!dirty;sb.onclick=save;bar.appendChild(sb);
-    var lo=el("button","lnk","লগআউট");lo.onclick=function(){S=null;try{localStorage.removeItem("annajah_s")}catch(e){}dirty=false;load()};bar.appendChild(lo);
+    var ab=el("button","add","সদস্য যোগ");ab.onclick=function(){D.members.push({name:"নতুন সদস্য",paid:{}});mark();render()};bar.appendChild(ab);
+    var sb=el("button","","সংরক্ষণ করে সবাইকে আপডেট দিন");sb.id="save";sb.disabled=!dirty;sb.onclick=saveClick;bar.appendChild(sb);
+    var lo=el("button","lnk","লগআউট");lo.onclick=function(){S=null;REQ=[];try{localStorage.removeItem("annajah_s")}catch(e){}dirty=false;load()};bar.appendChild(lo);
     note.textContent="আপনি কোষাধ্যক্ষ হিসেবে সম্পাদনা করছেন। সংরক্ষণ চাপলে সবার পেজে নতুন তথ্য দেখা যাবে।";
-    $("lnkwrap").style.display="none";$("login").style.display="none";
-  }else{note.textContent="এই পেজটি শুধু দেখার জন্য। কোষাধ্যক্ষ আপডেট করলে এখানে নতুন তথ্য দেখা যাবে।";$("lnkwrap").style.display="block"}
+    $("lnkwrap").style.display="none";$("login").style.display="none";$("pay").style.display="none";
+    renderPending();
+  }else{
+    note.textContent="এই পেজটি শুধু দেখার জন্য। কোষাধ্যক্ষ আপডেট করলে এখানে নতুন তথ্য দেখা যাবে।";
+    $("lnkwrap").style.display="block";$("pending").textContent="";$("pay").style.display="block";fillForm();updNav();
+  }
 }
 
-async function save(){
-  var s=$("save");s.disabled=true;s.textContent="সংরক্ষণ হচ্ছে…";
+function fillForm(){
+  var key=D.members.map(function(m){return m.name}).join("|");
+  if(key===namesKey)return;namesKey=key;
+  var sel=$("pn"),old=sel.value;sel.textContent="";
+  var o0=el("option","","— নাম বেছে নিন —");o0.value="";sel.appendChild(o0);
+  D.members.forEach(function(m){var o=el("option","",m.name);o.value=m.name;sel.appendChild(o)});
+  if(old)sel.value=old;
+  var pm=$("pm");if(!pm.options.length){MONTHS.forEach(function(n,i){var o=el("option","",n);o.value=i;pm.appendChild(o)});pm.value=new Date().getMonth()}
+}
+$("payopen").onclick=function(){var f=$("payform");f.style.display=f.style.display==="block"?"none":"block"};
+$("psend").onclick=async function(){
+  var btn=this,msg=$("pmsg"),n=$("pn").value,m=+$("pm").value,a=parseFloat($("pa").value);
+  msg.className="err";
+  if(!n||!(a>0)){msg.textContent="নাম ও টাকার পরিমাণ দিন।";return}
+  btn.disabled=true;
+  try{
+    var r=await fetch(URL0+"/rest/v1/payment_requests",{method:"POST",headers:hdr(null,{"Prefer":"return=minimal"}),body:JSON.stringify({member_name:n,month:m,year:D.year,amount:a,from_number:$("pf").value.trim()||null,trx_id:$("pt").value.trim()||null})});
+    if(!r.ok)throw 0;
+    msg.className="ok";msg.textContent="আপনার আবেদন পাঠানো হয়েছে। কোষাধ্যক্ষ নিশ্চিত করলে জমা দেখা যাবে।";
+    $("pa").value="";$("pf").value="";$("pt").value="";
+  }catch(e){msg.textContent="পাঠানো যায়নি, আবার চেষ্টা করুন।"}
+  setTimeout(function(){btn.disabled=false},3000);
+};
+
+function updNav(){var ed=editor();$("t2l").textContent=ed?"আবেদন":"সঞ্চয় পাঠান";var n=ed?REQ.filter(function(q){return q.status==="pending"}).length:0;var g=$("bdg");g.textContent=n?bn(n):"";g.style.display=n?"block":"none"}
+function show(n){$("v1").className="view"+(n===1?" on":"");$("v2").className="view"+(n===2?" on":"");$("t1").className=n===1?"on":"";$("t2").className=n===2?"on":"";window.scrollTo(0,0)}
+function renderPending(){
+  updNav();var box=$("pending");box.textContent="";
+  if(!editor())return;
+  var P=REQ.filter(function(q){return q.status==="pending"});
+  box.appendChild(el("h2","fh","অপেক্ষমাণ আবেদন ("+bn(P.length)+")"));
+  if(!P.length){box.appendChild(el("p","note","এখন কোনো আবেদন নেই।"));return}
+  P.forEach(function(q){
+    var c=el("div","rq");
+    c.appendChild(el("b","",q.member_name+" — ৳ "+bn(q.amount)));
+    var info=MONTHS[q.month]+" "+String(q.year).replace(/\d/g,function(d){return "০১২৩৪৫৬৭৮৯"[d]})+" • "+new Date(q.created_at).toLocaleString("bn-BD",{dateStyle:"medium",timeStyle:"short"});
+    if(q.from_number)info+=" • নম্বর: "+q.from_number;
+    if(q.trx_id)info+=" • আইডি: "+q.trx_id;
+    c.appendChild(el("div","m",info));
+    if(q.trx_id&&REQ.some(function(o){return o.id!==q.id&&o.trx_id&&o.trx_id.toLowerCase()===q.trx_id.toLowerCase()&&o.status!=="rejected"}))
+      c.appendChild(el("div","dup","এই ট্রানজেকশন আইডি আগেও এসেছে।"));
+    var ok=el("button","","নিশ্চিত"),no=el("button","no","বাতিল");
+    ok.onclick=function(){decide(q,true,ok,no)};no.onclick=function(){decide(q,false,ok,no)};
+    c.appendChild(ok);c.appendChild(no);box.appendChild(c)});
+}
+async function setStatus(q,st){
+  var r=await fetch(URL0+"/rest/v1/payment_requests?id=eq."+q.id,{method:"PATCH",headers:hdr(S.access_token,{"Prefer":"return=minimal"}),body:JSON.stringify({status:st})});
+  return r.ok;
+}
+async function decide(q,yes,ok,no){
+  var note=$("note");ok.disabled=true;no.disabled=true;
+  try{
+    if(yes){
+      var m=D.members.find(function(x){return x.name===q.member_name});
+      if(!m){note.textContent="সদস্য '"+q.member_name+"' তালিকায় পাওয়া যায়নি (নাম বদলেছে?)। হাতে লিখে দিন, তারপর বাতিল করুন।";ok.disabled=false;no.disabled=false;return}
+      if(q.year!==D.year){note.textContent="আবেদনটি "+q.year+" সালের, পেজে এখন অন্য সাল। সাল মিলিয়ে নিন।";ok.disabled=false;no.disabled=false;return}
+      var before=m.paid[q.month];
+      m.paid[q.month]=(+before||0)+Number(q.amount);
+      if(!(await saveLedger())){
+        if(before)m.paid[q.month]=before;else delete m.paid[q.month];
+        note.textContent="সংরক্ষণ হয়নি, আবার চেষ্টা করুন।";ok.disabled=false;no.disabled=false;render();return}
+    }
+    if(!(await setStatus(q,yes?"confirmed":"rejected")))throw 0;
+  }catch(e){note.textContent="কাজটি শেষ হয়নি। লগআউট করে আবার লগইন করে চেষ্টা করুন।"}
+  await loadReq();render();
+}
+
+async function saveLedger(){
   D.updated=new Date().toLocaleString("bn-BD",{dateStyle:"medium",timeStyle:"short"});
   try{
-    var r=await fetch(URL0+"/rest/v1/ledger?id=eq.1",{method:"PATCH",headers:Object.assign(hdr(S.access_token),{"Prefer":"return=representation"}),body:JSON.stringify({data:D,updated_at:new Date().toISOString()})});
+    var r=await fetch(URL0+"/rest/v1/ledger?id=eq.1",{method:"PATCH",headers:hdr(S.access_token,{"Prefer":"return=representation"}),body:JSON.stringify({data:D,updated_at:new Date().toISOString()})});
     var j=await r.json();
-    if(!r.ok||!j.length)throw new Error("no");
-    dirty=false;s.textContent="✔ সংরক্ষিত হয়েছে";setTimeout(render,1200);
-  }catch(e){s.disabled=false;s.textContent="✔ সংরক্ষণ করে সবাইকে আপডেট দিন";$("note").textContent="সংরক্ষণ হয়নি। লগআউট করে আবার লগইন করে চেষ্টা করুন।"}
+    if(!r.ok||!j.length)return false;
+    dirty=false;return true;
+  }catch(e){return false}
+}
+async function saveClick(){
+  var s=$("save");s.disabled=true;s.textContent="সংরক্ষণ হচ্ছে…";
+  if(await saveLedger()){s.textContent="সংরক্ষিত হয়েছে";setTimeout(render,1200)}
+  else{s.disabled=false;s.textContent="সংরক্ষণ করে সবাইকে আপডেট দিন";$("note").textContent="সংরক্ষণ হয়নি। লগআউট করে আবার লগইন করে চেষ্টা করুন।"}
 }
 
 $("showlogin").onclick=function(){$("login").style.display="block"};
@@ -172,11 +301,12 @@ $("dologin").onclick=async function(){
     if(!r.ok||!j.access_token)throw new Error("x");
     S={access_token:j.access_token,exp:Date.now()+(j.expires_in||3600)*1000-60000};
     try{localStorage.setItem("annajah_s",JSON.stringify(S))}catch(x){}
-    render();
+    render();loadReq();
   }catch(x){er.textContent="ইমেইল বা পাসওয়ার্ড ভুল।"}
 };
 setInterval(function(){if(!dirty&&!document.hidden)load()},60000);
 document.addEventListener("visibilitychange",function(){if(!document.hidden&&!dirty)load()});
+$("t1").onclick=function(){show(1)};$("t2").onclick=function(){show(2)};
 render();load();
 })();
 </script>
