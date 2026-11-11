@@ -199,6 +199,7 @@ function render(){
   if(ed){
     bar.appendChild(el("span","","সাল:"));var yi=el("input","yr");yi.type="number";yi.value=D.year;yi.onchange=function(){D.year=+yi.value||D.year;mark();render()};bar.appendChild(yi);
     var ab=el("button","add","সদস্য যোগ");ab.onclick=function(){D.members.push({name:"নতুন সদস্য",paid:{}});mark();render()};bar.appendChild(ab);
+    var bk=el("button","add","ব্যাকআপ নিন");bk.onclick=backup;bar.appendChild(bk);
     var sb=el("button","","সংরক্ষণ করে সবাইকে আপডেট দিন");sb.id="save";sb.disabled=!dirty;sb.onclick=saveClick;bar.appendChild(sb);
     var lo=el("button","lnk","লগআউট");lo.onclick=function(){S=null;REQ=[];try{localStorage.removeItem("annajah_s")}catch(e){}dirty=false;load()};bar.appendChild(lo);
     note.textContent="আপনি কোষাধ্যক্ষ হিসেবে সম্পাদনা করছেন। সংরক্ষণ চাপলে সবার পেজে নতুন তথ্য দেখা যাবে।";
@@ -292,6 +293,28 @@ async function saveClick(){
   else{s.disabled=false;s.textContent="সংরক্ষণ করে সবাইকে আপডেট দিন";$("note").textContent="সংরক্ষণ হয়নি। লগআউট করে আবার লগইন করে চেষ্টা করুন।"}
 }
 
+
+function backupText(){
+  var dg=function(n){return String(n).replace(/\d/g,function(d){return "০১২৩৪৫৬৭৮৯"[d]})};
+  var L=["আন-নাজাহ সমিতি — ব্যাকআপ","তারিখ: "+new Date().toLocaleString("bn-BD",{dateStyle:"medium",timeStyle:"short"}),"সাল: "+dg(D.year),"সদস্য: "+bn(D.members.length)+" জন",""],tot=0;
+  D.members.forEach(function(m,i){
+    var parts=[],sum=0;
+    for(var k=0;k<12;k++){var v=+m.paid[k]||0;if(v){parts.push(MONTHS[k]+" "+bn(v));sum+=v}}
+    tot+=sum;L.push(bn(i+1)+". "+m.name+" — "+(parts.length?parts.join(", ")+" | মোট "+bn(sum):"এখনও কোনো জমা নেই"))});
+  L.push("","সব সদস্যের মোট জমা: "+bn(tot));
+  if((D.former||[]).length){L.push("","প্রাক্তন সদস্য:");
+    D.former.forEach(function(m){var s=0;for(var k in m.paid)s+=+m.paid[k]||0;L.push(m.name+" — মোট জমা "+bn(s)+", ফেরত দেওয়া "+bn(m.refunded||0)+", বাকি ফেরত "+bn(s-(+m.refunded||0)))})}
+  L.push("","--- পুনরুদ্ধারের জন্য (মুছবেন না) ---",JSON.stringify(D));
+  return L.join("\n");
+}
+async function backup(){
+  var t=backupText(),note=$("note");
+  try{
+    if(navigator.share){await navigator.share({title:"আন-নাজাহ ব্যাকআপ",text:t});note.textContent="ব্যাকআপ পাঠানো হয়েছে। Notes বা হোয়াটসঅ্যাপে সংরক্ষিত আছে কি না দেখে নিন।";return}
+  }catch(e){if(e&&e.name==="AbortError")return}
+  try{await navigator.clipboard.writeText(t);note.textContent="ব্যাকআপ কপি হয়েছে। এখন Notes বা হোয়াটসঅ্যাপে পেস্ট করে রাখুন।"}
+  catch(e){note.textContent="কপি করা যায়নি। আবার চেষ্টা করুন।"}
+}
 $("showlogin").onclick=function(){$("login").style.display="block"};
 $("dologin").onclick=async function(){
   var e=$("em").value.trim(),p=$("pw").value,er=$("lerr");er.textContent="";
