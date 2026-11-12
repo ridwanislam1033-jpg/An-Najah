@@ -74,6 +74,7 @@ button.no{background:transparent;color:#c0392b;border:1px solid #c0392b;margin-l
 .nav span{font-size:1.3rem;line-height:1}
 .nav i{font-style:normal}
 .bdg{position:static;background:#c0392b;color:#fff;border-radius:10px;font-size:.72rem;min-width:18px;padding:0 5px;line-height:18px;display:none;font-weight:700}
+.bkn{display:flex;align-items:center;gap:10px;margin:12px 0 4px;font-size:1.05rem;flex-wrap:wrap}.bkn b{letter-spacing:1px;font-size:1.2rem}.bkn button{padding:6px 14px}
 </style>
 </head>
 <body>
@@ -99,9 +100,12 @@ button.no{background:transparent;color:#c0392b;border:1px solid #c0392b;margin-l
     <div class="pay" id="pay" style="display:none">
       <h2 class="fh" style="margin-top:6px">সঞ্চয় প্রেরণ করুন</h2>
       <div class="payb">
-        <a class="bk" id="bk" href="intent:#Intent;package=com.bKash.customerapp;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.bKash.customerapp;end">বিকাশ অ্যাপ খুলুন</a>
-        <button class="add" id="payopen">আমি টাকা পাঠিয়েছি</button>
+        <a class="bk" id="bk" href="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=com.bKash.customerapp;end">বিকাশ অ্যাপ খুলুন</a>
+        <a class="bk" id="bk2" href="tel:*247%23" style="background:#8a0b46">*247# ডায়াল করুন</a>
       </div>
+      <div class="bkn"><span>বিকাশ নম্বর</span><b id="bkno">01794041033</b><button class="add" id="bkcopy">কপি</button></div>
+      <p class="note">অ্যাপ না খুললে নিজে বিকাশ অ্যাপ খুলুন বা *247# ডায়াল করুন। টাকা পাঠানোর পর নিচের বাটন চাপুন।</p>
+      <div class="payb"><button class="add" id="payopen">আমি টাকা পাঠিয়েছি</button></div>
       <div class="lg" id="payform">
         <label>আপনার নাম<select id="pn"></select></label>
         <label>মাস<select id="pm"></select></label>
@@ -315,6 +319,12 @@ async function backup(){
   try{await navigator.clipboard.writeText(t);note.textContent="ব্যাকআপ কপি হয়েছে। এখন Notes বা হোয়াটসঅ্যাপে পেস্ট করে রাখুন।"}
   catch(e){note.textContent="কপি করা যায়নি। আবার চেষ্টা করুন।"}
 }
+
+$("bkcopy").onclick=async function(){
+  var t=$("bkno").textContent,b=this;
+  try{await navigator.clipboard.writeText(t)}catch(e){var x=document.createElement("textarea");x.value=t;document.body.appendChild(x);x.select();try{document.execCommand("copy")}catch(z){}x.remove()}
+  b.textContent="কপি হয়েছে";setTimeout(function(){b.textContent="কপি"},2000);
+};
 $("showlogin").onclick=function(){$("login").style.display="block"};
 $("dologin").onclick=async function(){
   var e=$("em").value.trim(),p=$("pw").value,er=$("lerr");er.textContent="";
